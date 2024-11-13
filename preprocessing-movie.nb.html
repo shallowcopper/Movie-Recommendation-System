@@ -1784,10 +1784,118 @@ sum(is.na(movies))</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>This dataset has no missing values.</p>
+<p>This data-set has no missing values.</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBSZW1vdmUgZXh0cmEgd2hpdGUtc3BhY2UgZnJvbSB0aXRsZSBjb2x1bW5cbm1vdmllcyR0aXRsZSA8LSB0cmltd3MobW92aWVzJHRpdGxlKVxuXG5gYGAifQ== -->
+<pre class="r"><code># Remove extra white-space from title column
+movies$title &lt;- trimws(movies$title)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The genre column has multiple values in the same column. Splitting
+each genre into it’s own row</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBMb2FkIG5lY2Vzc2FyeSBsaWJyYXJ5XG5saWJyYXJ5KHRpZHlyKVxuXG4jIFNlcGFyYXRlIGdlbnJlcyBpbnRvIGRpZmZlcmVudCBjb2x1bW5zXG5tb3ZpZXMgPC0gbW92aWVzICU+JVxuICBzZXBhcmF0ZV9yb3dzKGdlbnJlcywgc2VwID0gXCJcXFxcfFwiKVxuXG5gYGAifQ== -->
+<pre class="r"><code># Load necessary library
+library(tidyr)
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmF1dGhvcjogIlByYW5lZXRoIg0KLS0tDQpgYGB7cn0NCiMgTG9hZCBkYXRhDQptb3ZpZXMgPC0gcmVhZC5jc3YoIkM6L0NsYXNzX01vZHVsZXMvRGF0YSBNaW5pbmcvR3JvdXAgUHJvamVjdC9EYXRhc2V0cy9tb3ZpZS5jc3YiLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpDQoNCmBgYA0KDQpgYGB7cn0NCiMgQ2hlY2sgdGhlIHN0cnVjdHVyZQ0Kc3RyKG1vdmllcykNCiMgQ2hlY2sgZm9yIG1pc3NpbmcgdmFsdWVzDQpzdW0oaXMubmEobW92aWVzKSkNCg0KYGBgDQogIFRoaXMgZGF0YXNldCBoYXMgbm8gbWlzc2luZyB2YWx1ZXMuDQo=</div>
+# Separate genres into different columns
+movies &lt;- movies %&gt;%
+  separate_rows(genres, sep = &quot;\\|&quot;)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaGVhZChtb3ZpZXMpXG5gYGAifQ== -->
+<pre class="r"><code>head(movies)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6Mywic3VtbWFyeSI6eyJBIHRpYmJsZSI6WyI2IMOXIDMiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFCcjFTUFUvRE1CQzlmTFVrRWlnU2Y2QWpESWtFRlJJZFVWRWxHS0ZJWFUxaVdrTmlWNDVUeU1idlptaXdVeDlTMHAzQmllLzUzcjE3UGovZHI2YlJLZ0lBRDN6UEFTL1FXd2hlbG92a0ZzQjNkZUNBRDZINWYrbWs4eTRUNEZTdlVYZDR2QXdwN3M0UHhIZ3Btc216RXJLWlhGek5aamVYLzRTZlBkWWw0ZThNMFg1WDRWMitvMXpWa3Y0Qm5KVkVNY0V0Y0RMZnNDS1hGT1BSWEpRMGIydzBYaEN1U05VY2wrdGZXOEJKU1NzcjdpRzVGRHRHSDNMTVVVd1YyTWRvVGJrMGpGNlpVSXJQRkV1WjIzZS85YWR0MjUraFhsYVFDdlVRakhLaVNQb21OVjlIK3dGbExMYkd0aWE1WnI3QmdPeklBUkRYM0hTU0o5bW01aC9KOWRRbzJPR0RiYyt4RHdUMzNrSFRiVzJ0QU4xU3ZtWWN2UWNGZWFVRnprOWI3aHluVzhtNFFpc2FyVklsRk1HOEtCTUZJcDA1MlA4Q0hla0sxOWNDQUFBPSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["movieId"],"name":[1],"type":["int"],"align":["right"]},{"label":["title"],"name":[2],"type":["chr"],"align":["left"]},{"label":["genres"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"Toy Story (1995)","3":"Adventure"},{"1":"1","2":"Toy Story (1995)","3":"Animation"},{"1":"1","2":"Toy Story (1995)","3":"Children"},{"1":"1","2":"Toy Story (1995)","3":"Comedy"},{"1":"1","2":"Toy Story (1995)","3":"Fantasy"},{"1":"2","2":"Jumanji (1995)","3":"Adventure"}],"options":{"columns":{"min":{},"max":[10],"total":[3]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDcmVhdGUgZHVtbXkgdmFyaWFibGVzIGZvciBnZW5yZXNcbmxpYnJhcnkoZHBseXIpXG5tb3ZpZXMgPC0gbW92aWVzICU+JVxuICBtdXRhdGUodmFsdWUgPSAxKSAlPiVcbiAgcGl2b3Rfd2lkZXIobmFtZXNfZnJvbSA9IGdlbnJlcywgdmFsdWVzX2Zyb20gPSB2YWx1ZSwgdmFsdWVzX2ZpbGwgPSBsaXN0KHZhbHVlID0gMCkpXG5cbmBgYCJ9 -->
+<pre class="r"><code># Create dummy variables for genres
+library(dplyr)
+movies &lt;- movies %&gt;%
+  mutate(value = 1) %&gt;%
+  pivot_wider(names_from = genres, values_from = value, values_fill = list(value = 0))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Removing the column “No Genres Listed”</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW92aWVzIDwtIG1vdmllcyAlPiUgc2VsZWN0KC1gKG5vIGdlbnJlcyBsaXN0ZWQpYClcbmhlYWQobW92aWVzKVxuYGBgIn0= -->
+<pre class="r"><code>movies &lt;- movies %&gt;% select(-`(no genres listed)`)
+head(movies)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NiwibmNvbCI6MjEsInN1bW1hcnkiOnsiQSB0aWJibGUiOlsiNiDDlyAyMSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUJ1MVZ6Vy9UTUJSM1A5S3VSVXlWVURXT0ZpYzRwQktnU2V3MGxaYXdJaFhRVnRSZVRlSXREL3hST2M1WWIvdVRPWE5ZY2RLOGJva210QWtPSUdFcHNkL1A3L2Q3SDRuczQvSGlaWGZSSllRMFNMTlJJdzNQTFluM2FSYjRyd2hwMXAxUkkwM1N5ZVlMNS9USUxmcnVlZWllVnI1SlNEMW5PKytNV2VDOWZONFFlek85b2lkV214VjkrdnpnWVA5WmdlKytTeVZUWDZDTTdyMDFxVndDTi9TRGlPaVVxL0wyNHprREMrcU1XazNmWE1STThQTCtrNERaMkpIMUtYVXpmVzBnNHZRak01Wk9KbVhQQjBlY1dZUmNObG5HaDk5SlBuQyt3eWp4N2pIK2FMeXF6aTE2dnhXdkN0NUI1MVplbFg5ZjNpOTAvbXJlamZHZjkwL3pTa2VpcDVqa0Nka2NkLzBDYkV0OURud1NvWThGSzNoaGRJYlJPVmMyTmRlQUFza3NhRlVBTzZNWVJHUTQycTJSbGp4YW9YYkFsR1hKMWp6VzdnUU5VY3diR3lZWkVvZmhEVmx2WkVDaTM4NHNOaUFFTitoNnBJM1JhTFducThSeWd6RmFKeUg0QVJSV2N6SWRMdkFBSGVzd2xhNGN0blZ1ek5tMVRKcEF5QVNhYzU2cFlqNmRBSVQwMzJzd2xaWjJqUDQyd0xabXQwejkwcjNXNi9XUGF1OUR3UkxzUFlMZGlGazJPSFZ0NE02NnFsRGFlcG0xeEpIcTJUM21WY2cxVXdGNnFjb3lpZnd3VHRWWC84VitGb0ZzTGoxU3BGY3JmaU5jOXpjeDYrdEN5OE0yY25VR2F2dWxCUHZNc1RXN3J1Uzg0c0hTZ0xKWWlrT1RnZFYyMjhKdXFBVWllWEhrNmlkOXRSZUR2d2NBQUE9PSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["movieId"],"name":[1],"type":["int"],"align":["right"]},{"label":["title"],"name":[2],"type":["chr"],"align":["left"]},{"label":["Adventure"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Animation"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Children"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Comedy"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["Fantasy"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["Romance"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["Drama"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["Action"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["Crime"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["Thriller"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["Horror"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["Mystery"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["Sci-Fi"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["IMAX"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["Documentary"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["War"],"name":[18],"type":["dbl"],"align":["right"]},{"label":["Musical"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["Western"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["Film-Noir"],"name":[21],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"Toy Story (1995)","3":"1","4":"1","5":"1","6":"1","7":"1","8":"0","9":"0","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"},{"1":"2","2":"Jumanji (1995)","3":"1","4":"0","5":"1","6":"0","7":"1","8":"0","9":"0","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"},{"1":"3","2":"Grumpier Old Men (1995)","3":"0","4":"0","5":"0","6":"1","7":"0","8":"1","9":"0","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"},{"1":"4","2":"Waiting to Exhale (1995)","3":"0","4":"0","5":"0","6":"1","7":"0","8":"1","9":"1","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"},{"1":"5","2":"Father of the Bride Part II (1995)","3":"0","4":"0","5":"0","6":"1","7":"0","8":"0","9":"0","10":"0","11":"0","12":"0","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"},{"1":"6","2":"Heat (1995)","3":"0","4":"0","5":"0","6":"0","7":"0","8":"0","9":"0","10":"1","11":"1","12":"1","13":"0","14":"0","15":"0","16":"0","17":"0","18":"0","19":"0","20":"0","21":"0"}],"options":{"columns":{"min":{},"max":[10],"total":[21]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Generating two excel files 1. Dataset with MovieID and Generes useful
+for model building 2. Dataset with MovieID and Moviename</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW92aWVfZ2VucmVzPC0gbW92aWVzICU+JSBzZWxlY3QoLXRpdGxlKVxubW92aWVfdGl0bGVzPC0gbW92aWVzICU+JSBzZWxlY3QobW92aWVJZCwgdGl0bGUpICU+JSBkaXN0aW5jdCgpXG53cml0ZV94bHN4KG1vdmllX2dlbnJlcywgXCJDOi9DbGFzc19Nb2R1bGVzL0RhdGEgTWluaW5nL0dyb3VwIFByb2plY3QvTW92aWUtUmVjb21tZW5kYXRpb24tU3lzdGVtL21vdmllX2dlbnJlcy54bHN4XCIpXG5gYGAifQ== -->
+<pre class="r"><code>movie_genres&lt;- movies %&gt;% select(-title)
+movie_titles&lt;- movies %&gt;% select(movieId, title) %&gt;% distinct()
+write_xlsx(movie_genres, &quot;C:/Class_Modules/Data Mining/Group Project/Movie-Recommendation-System/movie_genres.xlsx&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gd3JpdGVfeGxzeChtb3ZpZV9nZW5yZXMsIFwiQzovQ2xhc3NfTW9kdWxlcy9EYXRhIE1pbmluZy9Hcm91cCBQcm9qZWN0L01vdmllLVJlY29tbWVuZGF0aW9uLVN5c3RlbS9tb3ZpZV9nZW5yZXMueGxzeFwiKSA6IFxuICBjb3VsZCBub3QgZmluZCBmdW5jdGlvbiBcIndyaXRlX3hsc3hcIlxuIn0= -->
+<pre><code>Error in write_xlsx(movie_genres, &quot;C:/Class_Modules/Data Mining/Group Project/Movie-Recommendation-System/movie_genres.xlsx&quot;) : 
+  could not find function &quot;write_xlsx&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Installing writeXL package</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcIndyaXRleGxcIilcbmBgYCJ9 -->
+<pre class="r"><code>install.packages(&quot;writexl&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiV0FSTklORzogUnRvb2xzIGlzIHJlcXVpcmVkIHRvIGJ1aWxkIFIgcGFja2FnZXMgYnV0IGlzIG5vdCBjdXJyZW50bHkgaW5zdGFsbGVkLiBQbGVhc2UgZG93bmxvYWQgYW5kIGluc3RhbGwgdGhlIGFwcHJvcHJpYXRlIHZlcnNpb24gb2YgUnRvb2xzIGJlZm9yZSBwcm9jZWVkaW5nOlxuXG5odHRwczovL2NyYW4ucnN0dWRpby5jb20vYmluL3dpbmRvd3MvUnRvb2xzL1xuSW5zdGFsbGluZyBwYWNrYWdlIGludG8g4oCYQzovVXNlcnMvcHJhbmUvQXBwRGF0YS9Mb2NhbC9SL3dpbi1saWJyYXJ5LzQuM+KAmVxuKGFzIOKAmGxpYuKAmSBpcyB1bnNwZWNpZmllZClcbnRyeWluZyBVUkwgJ2h0dHBzOi8vY3Jhbi5yc3R1ZGlvLmNvbS9iaW4vd2luZG93cy9jb250cmliLzQuMy93cml0ZXhsXzEuNS4xLnppcCdcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24vemlwJyBsZW5ndGggMjAzNTYzIGJ5dGVzICgxOTggS0IpXG5kb3dubG9hZGVkIDE5OCBLQlxuIn0= -->
+<pre><code>WARNING: Rtools is required to build R packages but is not currently installed. Please download and install the appropriate version of Rtools before proceeding:
+
+https://cran.rstudio.com/bin/windows/Rtools/
+Installing package into ‘C:/Users/prane/AppData/Local/R/win-library/4.3’
+(as ‘lib’ is unspecified)
+trying URL &#39;https://cran.rstudio.com/bin/windows/contrib/4.3/writexl_1.5.1.zip&#39;
+Content type &#39;application/zip&#39; length 203563 bytes (198 KB)
+downloaded 198 KB</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDigJh3cml0ZXhs4oCZIHN1Y2Nlc3NmdWxseSB1bnBhY2tlZCBhbmQgTUQ1IHN1bXMgY2hlY2tlZFxuXG5UaGUgZG93bmxvYWRlZCBiaW5hcnkgcGFja2FnZXMgYXJlIGluXG5cdEM6XFxVc2Vyc1xccHJhbmVcXEFwcERhdGFcXExvY2FsXFxUZW1wXFxSdG1wZ1ZoR2xXXFxkb3dubG9hZGVkX3BhY2thZ2VzXG4ifQ== -->
+<pre><code>package ‘writexl’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+    C:\Users\prane\AppData\Local\Temp\RtmpgVhGlW\downloaded_packages</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh3cml0ZXhsKVxud3JpdGVfeGxzeChtb3ZpZV9nZW5yZXMsIFwiQzovQ2xhc3NfTW9kdWxlcy9EYXRhIE1pbmluZy9Hcm91cCBQcm9qZWN0L01vdmllLVJlY29tbWVuZGF0aW9uLVN5c3RlbS9tb3ZpZV9nZW5yZXMueGxzeFwiKVxud3JpdGVfeGxzeChtb3ZpZV90aXRsZXMsIFwiQzovQ2xhc3NfTW9kdWxlcy9EYXRhIE1pbmluZy9Hcm91cCBQcm9qZWN0L01vdmllLVJlY29tbWVuZGF0aW9uLVN5c3RlbS9tb3ZpZV90aXRsZXMueGxzeFwiKVxuYGBgIn0= -->
+<pre class="r"><code>library(writexl)
+write_xlsx(movie_genres, &quot;C:/Class_Modules/Data Mining/Group Project/Movie-Recommendation-System/movie_genres.xlsx&quot;)
+write_xlsx(movie_titles, &quot;C:/Class_Modules/Data Mining/Group Project/Movie-Recommendation-System/movie_titles.xlsx&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCmF1dGhvcjogIlByYW5lZXRoIg0KLS0tDQpgYGB7cn0NCiMgTG9hZCBkYXRhDQptb3ZpZXMgPC0gcmVhZC5jc3YoIkM6L0NsYXNzX01vZHVsZXMvRGF0YSBNaW5pbmcvR3JvdXAgUHJvamVjdC9EYXRhc2V0cy9tb3ZpZS5jc3YiLCBzdHJpbmdzQXNGYWN0b3JzID0gRkFMU0UpDQoNCmBgYA0KDQpgYGB7cn0NCiMgQ2hlY2sgdGhlIHN0cnVjdHVyZQ0Kc3RyKG1vdmllcykNCiMgQ2hlY2sgZm9yIG1pc3NpbmcgdmFsdWVzDQpzdW0oaXMubmEobW92aWVzKSkNCg0KYGBgDQogIFRoaXMgZGF0YS1zZXQgaGFzIG5vIG1pc3NpbmcgdmFsdWVzLg0KYGBge3J9DQojIFJlbW92ZSBleHRyYSB3aGl0ZS1zcGFjZSBmcm9tIHRpdGxlIGNvbHVtbg0KbW92aWVzJHRpdGxlIDwtIHRyaW13cyhtb3ZpZXMkdGl0bGUpDQoNCmBgYA0KDQpUaGUgZ2VucmUgY29sdW1uIGhhcyBtdWx0aXBsZSB2YWx1ZXMgaW4gdGhlIHNhbWUgY29sdW1uLiBTcGxpdHRpbmcgZWFjaCBnZW5yZSBpbnRvIGl0J3Mgb3duIHJvdw0KYGBge3J9DQojIExvYWQgbmVjZXNzYXJ5IGxpYnJhcnkNCmxpYnJhcnkodGlkeXIpDQoNCiMgU2VwYXJhdGUgZ2VucmVzIGludG8gZGlmZmVyZW50IGNvbHVtbnMNCm1vdmllcyA8LSBtb3ZpZXMgJT4lDQogIHNlcGFyYXRlX3Jvd3MoZ2VucmVzLCBzZXAgPSAiXFx8IikNCg0KYGBgDQpgYGB7cn0NCmhlYWQobW92aWVzKQ0KYGBgDQpgYGB7cn0NCiMgQ3JlYXRlIGR1bW15IHZhcmlhYmxlcyBmb3IgZ2VucmVzDQpsaWJyYXJ5KGRwbHlyKQ0KbW92aWVzIDwtIG1vdmllcyAlPiUNCiAgbXV0YXRlKHZhbHVlID0gMSkgJT4lDQogIHBpdm90X3dpZGVyKG5hbWVzX2Zyb20gPSBnZW5yZXMsIHZhbHVlc19mcm9tID0gdmFsdWUsIHZhbHVlc19maWxsID0gbGlzdCh2YWx1ZSA9IDApKQ0KDQpgYGANClJlbW92aW5nIHRoZSBjb2x1bW4gIk5vIEdlbnJlcyBMaXN0ZWQiDQpgYGB7cn0NCm1vdmllcyA8LSBtb3ZpZXMgJT4lIHNlbGVjdCgtYChubyBnZW5yZXMgbGlzdGVkKWApDQpoZWFkKG1vdmllcykNCmBgYA0KDQpHZW5lcmF0aW5nIHR3byBleGNlbCBmaWxlcw0KMS4gRGF0YXNldCB3aXRoIE1vdmllSUQgYW5kIEdlbmVyZXMgdXNlZnVsIGZvciBtb2RlbCBidWlsZGluZw0KMi4gRGF0YXNldCB3aXRoIE1vdmllSUQgYW5kIE1vdmllbmFtZQ0KYGBge3J9DQptb3ZpZV9nZW5yZXM8LSBtb3ZpZXMgJT4lIHNlbGVjdCgtdGl0bGUpDQptb3ZpZV90aXRsZXM8LSBtb3ZpZXMgJT4lIHNlbGVjdChtb3ZpZUlkLCB0aXRsZSkgJT4lIGRpc3RpbmN0KCkNCg0KYGBgDQpJbnN0YWxsaW5nIHdyaXRlWEwgcGFja2FnZQ0KYGBge3J9DQppbnN0YWxsLnBhY2thZ2VzKCJ3cml0ZXhsIikNCmBgYA0KDQpgYGB7cn0NCmxpYnJhcnkod3JpdGV4bCkNCndyaXRlX3hsc3gobW92aWVfZ2VucmVzLCAiQzovQ2xhc3NfTW9kdWxlcy9EYXRhIE1pbmluZy9Hcm91cCBQcm9qZWN0L01vdmllLVJlY29tbWVuZGF0aW9uLVN5c3RlbS9tb3ZpZV9nZW5yZXMueGxzeCIpDQp3cml0ZV94bHN4KG1vdmllX3RpdGxlcywgIkM6L0NsYXNzX01vZHVsZXMvRGF0YSBNaW5pbmcvR3JvdXAgUHJvamVjdC9Nb3ZpZS1SZWNvbW1lbmRhdGlvbi1TeXN0ZW0vbW92aWVfdGl0bGVzLnhsc3giKQ0KYGBgDQo=</div>
 
 
 
