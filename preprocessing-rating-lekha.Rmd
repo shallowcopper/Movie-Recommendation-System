@@ -1,0 +1,82 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(lubridate)
+
+# Load the ratings data
+rating_df <- read.csv("C:/Users/Lekha Chittajallu/Downloads/DataMining_dataset/rating.csv")
+
+```
+
+```{r}
+head(rating_df)
+dim(rating_df)
+print(sum(is.na(rating_df)))
+str(rating_df)
+```
+```{r}
+
+# Find duplicates based on userId and movieId
+duplicates <- rating_df %>%
+  filter(duplicated(select(., userId, movieId)))
+
+# View the duplicates
+head(duplicates)
+
+```
+```{r}
+# Count duplicate rows
+num_duplicates <- nrow(duplicates)
+print(num_duplicates)
+
+```
+
+
+```{r}
+
+# Group by movieId and calculate the average rating, then select only movieId and avg_rating
+aggregated_ratings_df <- rating_df %>%
+  group_by(movieId) %>%
+  summarize(avg_rating = round(mean(rating), 1), .groups = 'drop') %>%
+  select(movieId, avg_rating)
+
+```
+
+
+```{r}
+head(aggregated_ratings_df)
+dim(aggregated_ratings_df)
+print(sum(is.na(aggregated_ratings_df)))
+str(aggregated_ratings_df)
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
