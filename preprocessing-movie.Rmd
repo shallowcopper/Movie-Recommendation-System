@@ -1,0 +1,19 @@
+---
+title: "R Notebook"
+output: html_notebook
+author: "Praneeth"
+---
+```{r}
+# Load data
+movies <- read.csv("C:/Class_Modules/Data Mining/Group Project/Datasets/movie.csv", stringsAsFactors = FALSE)
+
+```
+
+```{r}
+# Check the structure
+str(movies)
+# Check for missing values
+sum(is.na(movies))
+
+```
+  This dataset has no missing values.
