@@ -1,0 +1,554 @@
+
+## 1. Loading Required Packages
+
+```{r}
+# Install and load recommenderlab and data.table packages if not already installed
+if (!require("recommenderlab")) install.packages("recommenderlab")
+if (!require("data.table")) install.packages("data.table")
+
+library(recommenderlab)
+library(data.table)
+```
+
+```{r}
+# Install and load dplyr if not already installed
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+library(dplyr)
+
+```
+## 2. Reading and Filtering User Ratings Data
+
+```{r}
+# Define column names
+column_movies <- c("movieId", "title", "genres")
+column_ratings <- c("userId", "movieId", "rating", "timestamp")
+
+# Try reading the files and handle potential errors
+tryCatch({
+    # Read CSV files
+    movies <- read.csv("movie.csv", header = FALSE, col.names = column_movies)
+    ratings <- read.csv("rating.csv", header = FALSE, col.names = column_ratings)
+    
+    # Calculate the mean number of movies watched per user
+    mean_movies_watched <- ratings %>%
+      group_by(userId) %>%             # Group by each user
+      summarize(movies_watched = n()) %>%  # Count the number of movies each user watched
+      summarize(mean_movies = mean(movies_watched))  # Calculate the mean
+
+    # Print the result
+    print(mean_movies_watched)
+    
+    # Count the number of unique movies watched by each user
+    user_movie_counts <- ratings %>%
+        group_by(userId) %>%
+        summarise(movies_watched = n_distinct(movieId))
+    #print(user_movie_counts)
+    
+    # Filter users who have watched more than 150 movies
+    eligible_users <- user_movie_counts %>%
+        filter(movies_watched > mean_movies_watched) %>%
+        pull(userId)
+    #print(eligible_users)
+    
+    # Randomly select 1,000 unique users
+    set.seed(123) # For reproducibility
+    selected_users <- sample(unique(ratings$userId), 2000)
+    
+    # Filter ratings to include only the selected users
+    ratings <- subset(ratings, userId %in% selected_users)
+    
+    # Process the filtered ratings as needed
+}, error = function(e) {
+    message("Error while reading the file: ", e)
+})
+
+```
+
+
+
+```{r}
+# Display the first few rows of the movies data frame
+head(movies)
+```
+
+```{r}
+head(ratings)
+```
+## 3. Merging the Movies and Reviews Data
+
+```{r}
+# Merge the movies and ratings data frames on 'movieId' using an inner join
+movie_ratings <- merge(movies, ratings, by = "movieId", all = FALSE)
+
+# Drop the 'timestamp' column
+movie_ratings$timestamp <- NULL
+
+# Display the first few rows of the merged data frame
+head(movie_ratings)
+
+
+
+```
+
+```{r}
+# Convert specified columns to numeric
+movie_ratings$movieId <- as.numeric(movie_ratings$movieId)
+movie_ratings$userId <- as.numeric(movie_ratings$userId)
+movie_ratings$rating <- as.numeric(movie_ratings$rating)
+
+# Display the first few rows of the merged data frame
+head(movie_ratings)
+
+```
+## 4. Data Preprocessing
+
+```{r}
+# Load dplyr for data manipulation
+library(dplyr)
+
+# Group by 'title', then summarize to calculate count and mean of 'rating'
+reviews <- movie_ratings %>%
+  group_by(title) %>%
+  summarize(count = n(), mean = round(mean(rating), 1))
+
+# Display the first few rows of the result
+head(reviews)
+
+```
+
+
+```{r}
+# Get the dimensions of the data frame
+dim(movie_ratings)
+
+```
+## 5. Exploratory Data Analysis
+
+```{r}
+# Load the pryr package for memory usage
+if(!require(pryr)) install.packages("pryr")
+library(pryr)
+
+# Display structure of the data frame (similar to .info() in Python)
+str(movie_ratings)
+
+# Display memory usage of the data frame in bytes
+object_size(movie_ratings)
+
+```
+
+```{r}
+# Calculate summary statistics for numeric columns only
+numeric_summary <- sapply(movie_ratings[sapply(movie_ratings, is.numeric)], summary)
+
+# Round the numeric summary statistics
+rounded_summary <- round(numeric_summary, 1)
+
+# Display the rounded summary statistics
+print(rounded_summary)
+
+
+```
+
+```{r}
+# Convert columns to the specified types
+movie_ratings$movieId <- as.integer(movie_ratings$movieId)
+movie_ratings$userId <- as.integer(movie_ratings$userId)
+movie_ratings$genres <- as.factor(movie_ratings$genres)
+```
+
+```{r}
+head(movie_ratings)
+```
+
+
+```{r}
+# Load pryr for memory usage information
+if (!requireNamespace("pryr", quietly = TRUE)) install.packages("pryr")
+library(pryr)
+
+# Display structure of the data frame (data types and sample values)
+str(movie_ratings)
+
+# Calculate memory usage of the entire data frame
+total_memory <- object_size(movie_ratings)
+cat("Total memory usage of movie_ratings:", total_memory, "\n")
+
+# Calculate memory usage per column
+column_memory <- sapply(movie_ratings, function(col) object_size(col))
+column_memory
+
+```
+
+```{r}
+# Calculate the number of unique values for each column in the ratings data frame
+unique_counts <- sapply(filtered_ratings, n_distinct)
+
+# Display the result
+unique_counts
+```
+
+```{r}
+# Calculate the number of missing values for each column in the ratings data frame
+na_counts <- sapply(filtered_ratings, function(x) sum(is.na(x)))
+
+# Display the result
+na_counts
+
+```
+
+```{r}
+# Calculate the number of missing values for each column in the movie_ratings data frame
+na_counts <- sapply(movie_ratings, function(x) sum(is.na(x)))
+
+# Display the result
+na_counts
+
+```
+
+```{r}
+# Count the occurrences of each unique userId
+user_counts <- table(movie_ratings$userId)
+
+# Display the result
+head(user_counts)
+
+```
+
+
+```{r}
+# Convert to data frame
+user_counts_df <- as.data.frame(user_counts)
+colnames(user_counts_df) <- c("userId", "count")
+
+# Display the data frame
+head(user_counts_df)
+
+```
+
+```{r}
+# Count occurrences of each unique userId
+user_counts <- table(movie_ratings$userId)
+
+# Filter for userIds with a count greater than zero
+valid_user_ids <- names(user_counts[user_counts > 0])
+
+# Display the valid user IDs
+head(valid_user_ids)
+
+```
+
+```{r}
+# Filter movie_ratings to include only rows with userId in valid_user_ids
+filtered_ratings <- movie_ratings[movie_ratings$userId %in% valid_user_ids, ]
+
+# Display the first few rows of the filtered data frame
+head(filtered_ratings)
+
+```
+## 6. Creation of User Rating Matrix
+
+```{r}
+# Set the batch size
+batch_size <- 100
+
+# Calculate the total number of users
+total_users <- length(valid_user_ids)
+
+# Calculate the number of batches needed
+num_batches <- ceiling(total_users / batch_size)
+
+# Display the number of batches
+num_batches
+
+```
+
+```{r}
+# Load necessary libraries
+if (!requireNamespace("reshape2", quietly = TRUE)) install.packages("reshape2")
+library(reshape2)
+
+# Initialize the list to store batches
+user_rating_list <- list()
+
+# Loop through each batch
+for (i in 0:(num_batches - 1)) {
+  start_index <- i * batch_size + 1
+  end_index <- min((i + 1) * batch_size, length(valid_user_ids))
+  batch_users <- valid_user_ids[start_index:end_index]
+  
+  cat("Running batch no:", i, "\n")
+  
+  # Filter the data for users in the current batch
+  batch_data <- filtered_ratings[filtered_ratings$userId %in% batch_users, ]
+  
+  # Create a cross-tabulation for the current batch
+  batch_mov <- dcast(batch_data, userId ~ title, value.var = "rating", fun.aggregate = sum)
+  
+  cat("Appending batch no (", i, ") to the list\n")
+  user_rating_list[[i + 1]] <- batch_mov  # Append each batch to the list
+}
+
+cat("Before concatenation\n")
+
+```
+
+
+```{r}
+# Load dplyr for bind_rows
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+library(dplyr)
+
+# Concatenate all batches into a single data frame
+user_rating <- bind_rows(user_rating_list)
+
+```
+
+```{r}
+# Assuming `user_rating` is your dataframe
+colnames(user_rating)[1:20]
+
+```
+
+
+```{r}
+# Load required libraries
+library(readxl)
+
+# Read the Excel file (assuming the file has one sheet and no header)
+x_data <- read_excel("x_data.xlsx", col_names = FALSE)
+
+# Extract the strings from cells A2:A102 (modify range as needed)
+watched_movies <- x_data$...1[2:102]  # Adjust for the first column and required range
+
+# Create a DataFrame
+user_movies_df <- data.frame(watched_movies = watched_movies)
+
+# Print the DataFrame
+print(user_movies_df)
+
+# Process the "watched_movies" column to extract lists of movies
+user_movies_df$watched_movies <- lapply(user_movies_df$watched_movies, function(movies) {
+  # Convert the string representation of list to actual vector
+  # Remove brackets and split by commas
+  movies_clean <- gsub("\\[|\\]|'", "", movies)  # Remove brackets and quotes
+  movies_vec <- strsplit(movies_clean, ",\\s*")[[1]]  # Split by comma and optional whitespace
+  return(movies_vec)
+})
+
+# Print the processed DataFrame
+print(user_movies_df)
+```
+
+
+```{r}
+print(user_movies_df$watched_movies[1])
+```
+## 7. Creation of Pre Computed Correlation Matrix
+
+```{r}
+# Precompute correlations
+precompute_correlations <- function(user_rating) {
+  cor_matrix <- cor(user_rating, method = "pearson", use = "pairwise.complete.obs")
+  return(cor_matrix)
+}
+
+# Example usage
+correlation_matrix <- precompute_correlations(user_rating)
+
+```
+
+
+```{r}
+# Save the correlation matrix to an RDS file
+saveRDS(correlation_matrix, "correlation_matrix.rds")
+
+# Save reviews and movies datasets (used for merging recommendations)
+saveRDS(reviews, "reviews.rds")
+saveRDS(movies, "movies.rds")
+```
+
+
+
+```{r}
+dim(correlation_matrix)
+```
+## 8. Recommendation Methodology
+
+```{r}
+compute_similarity <- function(userInput, correlation_matrix) {
+  # Identify the movies that exist in the correlation matrix
+  valid_movies <- userInput[userInput %in% rownames(correlation_matrix)]
+  
+  if (length(valid_movies) == 0) {
+    stop("None of the specified movies are present in the dataset.")
+  }
+  
+  # Fetch the correlations for the valid movies
+  similarity <- rowSums(correlation_matrix[, valid_movies, drop = FALSE], na.rm = TRUE)
+  
+  return(similarity)
+}
+
+```
+
+
+```{r}
+# Initialize a list with the correct length
+recommendations_list <- vector("list", nrow(user_movies_df))
+
+# Loop through all rows in user_movies_df
+for (i in 1:nrow(user_movies_df)) {
+  # Extract the watched_movies for the current row
+  userInput <- unlist(user_movies_df$watched_movies[i])
+  
+  # Detect and clean invalid characters for the current input
+  userInput <- gsub("[^[:print:]]", "", userInput)
+  userInput <- iconv(userInput, from = "latin1", to = "UTF-8", sub = "")
+  
+  # Try computing similarity and processing correlated movies
+  tryCatch({
+    # Compute similarity using precomputed correlation matrix
+    similarity <- compute_similarity(userInput, correlation_matrix)
+    
+    # Create a dataframe of correlated movies
+    correlatedMovies <- data.frame(
+      title = names(similarity),
+      correlation = similarity,
+      row.names = NULL
+    )
+    
+    # Merge with reviews and movies dataframes
+    correlatedMovies <- merge(correlatedMovies, reviews, by = "title", all.x = TRUE)
+    correlatedMovies <- merge(correlatedMovies, movies, by = "title", all.x = TRUE)
+    
+    # Filter movies with mean > 3.8 and count > 150
+    filtered_movies <- subset(correlatedMovies, mean > 3.8 & count > 150)
+    
+    # Adjust the scoring formula to include count
+    filtered_movies$weighted_score <- 0.6 * filtered_movies$correlation + 
+                                      0.3 * filtered_movies$mean + 
+                                      0.1 * log(filtered_movies$count + 1)
+    
+    # Sort by the weighted score
+    sorted_movies <- filtered_movies[order(-filtered_movies$weighted_score), ]
+    
+    # Filter out movies the user has already watched
+    sorted_movies <- subset(sorted_movies, !(title %in% userInput))
+    
+    # Select the top 10 recommendations (increased from 5)
+    final_recommendation <- head(sorted_movies, 50)
+    
+    # Store the recommendations for this row
+    if (nrow(final_recommendation) > 0) {
+      recommendations_list[[i]] <- list(recommendations = final_recommendation$title)
+    } else {
+      recommendations_list[[i]] <- list(recommendations = NA_character_)
+    }
+    
+  }, error = function(e) {
+    # Handle errors gracefully
+    cat("Error in row", i, ":", e$message, "\n")
+    recommendations_list[[i]] <- list(recommendations = NA_character_)
+  })
+}
+
+# Add recommendations to the user_movies_df as a new column
+user_movies_df$recommendations <- sapply(recommendations_list, function(x) {
+  if (!is.null(x$recommendations) && !all(is.na(x$recommendations))) {
+    paste(x$recommendations, collapse = " | ")  # Using pipe symbol as delimiter
+  } else {
+    NA_character_
+  }
+})
+
+```
+## 9. Reading the Y data for Comparision
+
+```{r}
+# Load necessary library
+library(readxl)
+
+# Step 1: Read the specific range (A2:A6) from the Excel file
+y_data_values <- read_excel("y_data.xlsx", range = "A2:A102", col_names = FALSE)
+
+# Step 2: Convert the data into a vector
+y_data_values <- y_data_values[[1]]
+
+# Step 4: Add the y_data column to user_movies_df
+# Ensure the length matches the number of rows
+if (length(y_data_values) == nrow(user_movies_df)) {
+  user_movies_df$y_data <- y_data_values
+} else {
+  stop("The number of y_data values does not match the number of rows in user_movies_df.")
+}
+
+# Step 5: Print the updated DataFrame
+print(user_movies_df)
+```
+
+
+
+```{r}
+print(user_movies_df)
+```
+## 10. Accuracy Calculation
+
+```{r}
+# Initialize a vector to store accuracy for each row
+accuracies <- numeric(nrow(user_movies_df))
+
+# Loop through each row
+for (i in 1:nrow(user_movies_df)) {
+  # Get recommendations for the current row and split into a vector using '|'
+  recs <- strsplit(as.character(user_movies_df$recommendations[[i]]), "\\|")[[1]]
+  # Trim whitespace from recommendations
+  recs <- trimws(recs)
+  
+  # Clean y_data: remove brackets, quotes, and split
+  y_movies <- gsub("\\[|\\]|\\'", "", user_movies_df$y_data[[i]])
+  y_movies <- strsplit(y_movies, ", ")[[1]]
+  # Trim whitespace from y_movies
+  y_movies <- trimws(y_movies)
+  
+  # Skip if either recommendations or y_data is NA/NULL
+  if (is.null(recs) || is.na(recs[1]) || is.null(y_movies) || is.na(y_movies[1])) {
+    accuracies[i] <- 0
+    next
+  }
+  
+  # Ensure case-insensitive matching
+  recs <- tolower(recs)
+  y_movies <- tolower(y_movies)
+  
+  # Count the number of matches
+  matches <- sum(recs %in% y_movies)
+  
+  # Assign accuracy based on the number of matches
+  if (matches >= 3) {
+    accuracies[i] <- 100
+  } else if (matches == 2) {
+    accuracies[i] <- 66
+  } else if (matches == 1) {
+    accuracies[i] <- 33
+  } else {
+    accuracies[i] <- 0
+  }
+}
+
+# Add accuracy column to the dataframe
+user_movies_df$row_accuracy <- accuracies
+
+# Calculate the average accuracy across all rows
+avg_accuracy <- mean(accuracies, na.rm = TRUE)
+
+# Print results
+cat("Row-wise accuracies:\n")
+print(user_movies_df$row_accuracy) # Directly show the percentage
+cat("\nAverage accuracy across all rows:", round(avg_accuracy, 2), "%\n")
+
+```
+
+
+
+
